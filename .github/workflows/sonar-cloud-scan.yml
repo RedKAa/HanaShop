@@ -1,4 +1,4 @@
-name: Build
+name: Automatic Code Review by SonarCloud | © 2020 by Mr.Whale
 on:
   push:
     branches:
