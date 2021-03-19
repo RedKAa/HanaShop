@@ -37,27 +37,46 @@ public class DeleteProducts extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String URL = "manager";
         String msg = "Deleted!";
-        
+
         String productList[] = request.getParameterValues("deleteList");
         HttpSession session = request.getSession();
         User userUpdate = (User) session.getAttribute("user");
-        
-        for (String productID : productList) {
-            if (!productID.isEmpty() && productID != null) {
-                ProductServiceImpl productService = new ProductServiceImpl();
-                if (!productService.delete(productID, userUpdate.getId())) {
-                    msg = "Delete ERROR!";
+        //check user role 
+        boolean isAdmin = false;
+        if (userUpdate != null && userUpdate.checkAdmin()) {
+            isAdmin = true;
+        }//checked
+
+        if (isAdmin && productList.length >= 1) {
+            int count = 0;
+            boolean error = false;
+            for (String productID : productList) {
+                if (!productID.isEmpty() && productID != null) {
+                    ProductServiceImpl productService = new ProductServiceImpl();
+                    if (!productService.delete(productID, userUpdate.getId())) {
+                        error = true;
+                        msg += productService.get(productID).getName()+", ";
+                    }else{
+                        count++;
+                    }
                 }
             }
+            if(error){
+                msg += "deleted failed!\n";
+            }
+            if(count >= 1){
+                msg+= count+" products has been deleted!";
+            }
+            request.setAttribute("msg", msg);
+            request.setAttribute("action", "manager");
+            RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
+            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("view/Invalid.html");
         }
-
-        request.setAttribute("msg", msg);
-        request.setAttribute("action", "manager");
-        RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-        dispatcher.forward(request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

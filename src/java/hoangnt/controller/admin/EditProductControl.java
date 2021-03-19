@@ -40,8 +40,6 @@ public class EditProductControl extends HttpServlet {
         String URL = "view/admin/EditProduct.jsp";
         ErrorMessage msg = new ErrorMessage();
 
-        User userUpdate = (User) session.getAttribute("user");
-
         String productID = request.getParameter("ID");
         String name = request.getParameter("name");
         String image = request.getParameter("image");
@@ -52,42 +50,50 @@ public class EditProductControl extends HttpServlet {
         boolean status = request.getParameter("status") != null;
 
         Product dto = null;
+        boolean isAdmin = false;
+        User userUpdate = (User) session.getAttribute("user");
+        if (userUpdate != null && userUpdate.checkAdmin()) {
+            isAdmin = true;
+        }//checked
+        if (isAdmin) {
+            try {
+                int quantityInt = Integer.parseInt(quantity);
+                float priceFloat = Float.parseFloat(price);
+                if (quantityInt <= 0 || quantityInt > Integer.MAX_VALUE) {
+                    throw new Exception("Quantity must be a positive number!");
+                }
+                if (priceFloat <= 0 || priceFloat > Float.MAX_VALUE) {
+                    throw new Exception("Price must be a positive number!");
+                }
+                dto = new Product();
+                dto.setId(productID);
+                dto.setName(name);
+                dto.setImage(image);
+                dto.setPrice(priceFloat);
+                dto.setQuantity(quantityInt);
+                dto.setDescription(description);
+                dto.setCategoryID(cateID);
+                dto.setStatus(status);
 
-        try {
-            int quantityInt = Integer.parseInt(quantity);
-            float priceFloat = Float.parseFloat(price);
-            if (quantityInt <= 0 || quantityInt > Integer.MAX_VALUE) {
-                throw new Exception("Quantity must be a positive number!");
-            }
-            if (priceFloat <= 0 || priceFloat > Float.MAX_VALUE) {
-                throw new Exception("Price must be a positive number!");
-            }
-            dto = new Product();
-            dto.setId(productID);
-            dto.setName(name);
-            dto.setImage(image);
-            dto.setPrice(priceFloat);
-            dto.setQuantity(quantityInt);
-            dto.setDescription(description);
-            dto.setCategoryID(cateID);
-            dto.setStatus(status);
-    
-            ProductServiceImpl productService = new ProductServiceImpl();
+                ProductServiceImpl productService = new ProductServiceImpl();
 
-            if (!productService.edit(dto, userUpdate.getId())) {
-                msg.addMessage("Edit failed!");
+                if (!productService.edit(dto, userUpdate.getId())) {
+                    msg.addMessage("Edit failed!");
+                }
+                msg.addMessage("Updated!");
+            } catch (Exception e) {
+                URL = "ServletDispatcher?btAction=loadEdit&pid=" + productID;
+                msg.addMessage(e.getMessage());
+                log(e.getMessage());
+            } finally {
+                request.setAttribute("product", dto);
+                request.setAttribute("msg", msg);
+                request.setAttribute("action", "manager");
+                RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
+                dispatcher.forward(request, response);
             }
-            msg.addMessage("Updated!");
-        } catch (Exception e) {
-            URL = "ServletDispatcher?btAction=loadEdit&pid="+productID;
-            msg.addMessage(e.getMessage());
-            log(e.getMessage());
-        } finally {
-            request.setAttribute("product", dto);
-            request.setAttribute("msg", msg);
-            request.setAttribute("action", "manager");
-            RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("view/Invalid.html");
         }
 
     }

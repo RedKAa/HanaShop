@@ -53,7 +53,7 @@ public class SearchByPriceControl extends HttpServlet {
                     throw new Exception("");
                 }
             } catch (Exception e) {
-                errMsg.addMessage("Invalid range of price!");
+                errMsg.addMessage("Invalid range of price, (10000-"+Float.MAX_VALUE+")!");
             }
         }
 

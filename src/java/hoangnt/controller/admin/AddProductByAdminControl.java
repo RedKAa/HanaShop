@@ -48,41 +48,45 @@ public class AddProductByAdminControl extends HttpServlet {
             isAdmin = true;
         }//checked
 
-        String productID = UUID.randomUUID().toString().substring(0, 10);
-        String name = request.getParameter("name");
-        String image = request.getParameter("image");
-        String price = request.getParameter("price");
+        if (isAdmin) {
+            String productID = UUID.randomUUID().toString().substring(0, 10);
+            String name = request.getParameter("name");
+            String image = request.getParameter("image");
+            String price = request.getParameter("price");
 
-        String quantity = request.getParameter("quantity");
-        String description = request.getParameter("description");
-        String cateID = request.getParameter("category");
-        boolean status = request.getParameter("status") != null;
-        Product dto;
+            String quantity = request.getParameter("quantity");
+            String description = request.getParameter("description");
+            String cateID = request.getParameter("category");
+            boolean status = request.getParameter("status") != null;
+            Product dto;
 
-        try {
-            int quantityInt = Integer.parseInt(quantity);
-            float priceFloat = Float.parseFloat(price);
-            if (priceFloat <= 0 || priceFloat > Float.MAX_VALUE) {
-                throw new Exception("Price must be a positive number!");
+            try {
+                int quantityInt = Integer.parseInt(quantity);
+                float priceFloat = Float.parseFloat(price);
+                if (priceFloat <= 0 || priceFloat > Float.MAX_VALUE) {
+                    throw new Exception("Price must be a positive number!");
+                }
+                if (quantityInt <= 0 || quantityInt > Integer.MAX_VALUE) {
+                    throw new Exception("Quantity must be a positive number!");
+                }
+                dto = new Product(productID, name, image, description, priceFloat, quantityInt, status, cateID);
+                ProductServiceImpl productService = new ProductServiceImpl();
+                if (!productService.insert(dto, user.getId())) {
+                    msg.addMessage("Added failed");
+                } else {
+                    msg.addMessage(name + " has been added!");
+                }
+            } catch (Exception e) {
+                msg.addMessage(e.getMessage());
+                log(e.getMessage());
+            } finally {
+                request.setAttribute("msg", msg);
+                request.setAttribute("action", "manager");
+                RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
+                dispatcher.forward(request, response);
             }
-            if (quantityInt <= 0 || quantityInt > Integer.MAX_VALUE) {
-                throw new Exception("Quantity must be a positive number!");
-            }
-            dto = new Product(productID, name, image, description, priceFloat, quantityInt, status, cateID);
-            ProductServiceImpl productService = new ProductServiceImpl();
-            if (!productService.insert(dto, user.getId())) {
-                msg.addMessage("Added failed");
-            } else {
-                msg.addMessage(productID+" has been added!");
-            }
-        } catch (Exception e) {
-            msg.addMessage(e.getMessage());
-            log(e.getMessage());
-        } finally {
-            request.setAttribute("msg", msg);
-            request.setAttribute("action", "manager");
-            RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("view/Invalid.html");
         }
     }
 

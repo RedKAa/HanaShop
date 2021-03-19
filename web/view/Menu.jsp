@@ -40,9 +40,14 @@
                         </button>
                     </div>
                 </div>
-                <a class="btn btn-success btn-sm ml-3" href="#">
+                <a class="btn btn-success btn-sm ml-3" href="cart?action=view cart">
                     <i class="fa fa-shopping-cart"></i> Cart
-                    <span class="badge badge-light">0</span>
+                    <c:if test="${not empty sessionScope.cart}">
+                        <span class="badge badge-light">${sessionScope.cart.numOfItems}</span>
+                    </c:if>
+                    <c:if test="${empty sessionScope.cart}">
+                        <span class="badge badge-light">0</span>
+                    </c:if>
                 </a>
             </form>
             <!-- End Search By Name Form-->

@@ -34,18 +34,20 @@
                     </c:if>
                     <c:forEach items="${Products}" var="p">
                         <div class="col-12 col-md-6 col-lg-4">
-                            <div class="card" style="margin-bottom: 20px">
+                            <div class="card bg-light" style="margin-bottom: 20px">
                                 <img class="card-img-top" src="${p.image}" alt="${p.name}" style="height: 250px">
                                 <div class="card-body">
                                     <h4 class="card-title show_txt"><a href="ServletDispatcher?btAction=viewProduct&pid=${p.id}" title="View Product">${p.name}</a></h4>
-                                    <p class="card-text show_txt">${p.description}
+                                    <p class=" card-text show_txt">${p.description}
                                     </p>
                                     <div class="row">
                                         <div class="col">
-                                            <p class="btn btn-danger btn-block">${p.price} VND</p>
+                                            <!--<p class="btn btn-danger btn-block">${p.price} VND</p>-->
+                                            <p class="price">PRICE: ${p.price} VND</p>
                                         </div>
                                         <div class="col">
-                                            <a href="#" class="btn btn-success btn-block">Add to cart</a>
+<!--                                            <a href="cart?action=add to cart&pid=${p.id}" class="btn btn-success btn-block">Add to cart</a>-->
+                                            <a href="cart?action=add to cart&pid=${p.id}" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fa fa-cart-plus"></i> Add to cart </a>
                                         </div>
                                     </div>
                                 </div>

@@ -40,9 +40,10 @@ public class ServletDispatcher extends HttpServlet {
         String url = HOME_CONTROL;
         try {
             String button = request.getParameter("btAction");
-            if(button == null || "".equals(button.trim())){
-                
-            }else if ("login".equals(button)) {
+            if (button == null || "".equals(button.trim())) {
+            } else if ("home".equals(button)) {
+                url="home";
+            } else if ("login".equals(button)) {
                 url = "login";
             } else if ("logout".equals(button)) {
                 url = "logout";
@@ -70,7 +71,7 @@ public class ServletDispatcher extends HttpServlet {
                 url = "/viewCart";
             } else if ("viewProduct".equals(button)) {
                 url = "/viewProduct";
-            }else{
+            } else {
                 url = "view/Invalid.html";
             }
 

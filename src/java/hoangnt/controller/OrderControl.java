@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hoangnt.controller.admin;
+package hoangnt.controller;
 
-import hoangnt.model.Category;
-import hoangnt.model.Product;
+import hoangnt.model.Cart;
+import hoangnt.model.Order;
+import hoangnt.model.OrderErrorMessage;
 import hoangnt.model.User;
-import hoangnt.service.impl.CategoryServiceImpl;
-import hoangnt.service.impl.ProductServiceImpl;
+import hoangnt.service.impl.OrderServiceImpl;
 import java.io.IOException;
-import java.util.List;
-import javax.servlet.RequestDispatcher;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author user
  */
-public class ProductManagerControl extends HttpServlet {
+public class OrderControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,60 +36,25 @@ public class ProductManagerControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String URL = "view/admin/ManagerProduct.jsp";
-
-        //caculate begin_row and end_row of query_result want to take
-        int beginIndex, endIndex;
-        int pageIndex = 1; //default value
-        int pageSize = 15;
-
-        String page = request.getParameter("pageIndex");
-        if (page != null) {
-            pageIndex = Integer.parseInt(page);
-        }
-        beginIndex = pageSize * (pageIndex - 1) + 1;
-        endIndex = pageSize * pageIndex;
-        //caculated
-
+        OrderErrorMessage msg = new OrderErrorMessage();
+        String URL = request.getContextPath();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        //check user role 
-        boolean isAdmin = false;
-        if (user != null && user.checkAdmin()) {
-            isAdmin = true;
-        }//checked
-//            
-        if (isAdmin) {
-            try {
-                //load list of products
-                ProductServiceImpl productService = new ProductServiceImpl();
-                List<Product> products = productService.getAll(beginIndex, endIndex, true);
-                //end of load products
-
-                //Paging
-                int countResult = productService.countAll(true);
-                int endPage = countResult / pageSize;
-                if (countResult % pageSize != 0) {
-                    endPage++;
-                }
-                //end of paging
-
-                //load list of category
-                CategoryServiceImpl categoryService = new CategoryServiceImpl();
-                List<Category> category = categoryService.getAll();
-                request.setAttribute("Category", category);
-                //end of load category
-
-                request.setAttribute("pageIndex", pageIndex);
-                request.setAttribute("endPage", endPage);
-                request.setAttribute("Products", products);
-                request.setAttribute("action", "manager");
-            } finally {
-                RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-                dispatcher.forward(request, response);
-            }
+        if (user == null) {
+            URL += "/ServletDispatcher?btAction=login&var=1";
         } else {
-            response.sendRedirect("view/Invalid.html");
+            if (user.checkAdmin()) {
+                msg.setUserRole("Admin cannot do order!");
+            } else {
+                Cart cart = (Cart) session.getAttribute("cart");
+                if(cart == null){
+                    msg.setEmptyCart("Your cart is empty!");
+                }else{
+                    OrderServiceImpl orderService = new OrderServiceImpl();
+                    Order order = new Order();
+                    orderService.insert(order);
+                }
+            }
         }
     }
 

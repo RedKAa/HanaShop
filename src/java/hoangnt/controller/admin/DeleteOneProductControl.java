@@ -5,6 +5,7 @@
  */
 package hoangnt.controller.admin;
 
+import hoangnt.model.Product;
 import hoangnt.model.User;
 import hoangnt.service.impl.ProductServiceImpl;
 import java.io.IOException;
@@ -36,22 +37,32 @@ public class DeleteOneProductControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String URL = "manager";
+        String msg = "";
         String productID = request.getParameter("pid");
         HttpSession session = request.getSession();
         User userUpdate = (User) session.getAttribute("user");
-        String msg = "Deleted!";
+        //check user role 
+        boolean isAdmin = false;
+        if (userUpdate != null && userUpdate.checkAdmin()) {
+            isAdmin = true;
+        }//checked
 
-        if (!productID.isEmpty() && productID != null) {
-            ProductServiceImpl productService = new ProductServiceImpl();
-            if (!productService.delete(productID, userUpdate.getId())) {
-                msg = "Delete failed!";
+        if (isAdmin) {
+            if (!productID.isEmpty() && productID != null) {
+                ProductServiceImpl productService = new ProductServiceImpl();
+                Product p = productService.get(productID);
+                msg = p.getName() + " has been deleted!";
+                if (!productService.delete(productID, userUpdate.getId())) {
+                    msg = "Delete failed!";
+                }
             }
+            request.setAttribute("msg", msg);
+            request.setAttribute("action", "manager");
+            RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
+            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("view/Invalid.html");
         }
-
-        request.setAttribute("msg", msg);
-        request.setAttribute("action", "manager");
-        RequestDispatcher dispatcher = request.getRequestDispatcher(URL);
-        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

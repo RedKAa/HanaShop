@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -15,7 +16,8 @@
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link href="css/style.css" rel="stylesheet" type="text/css"/>
-
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+              integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
@@ -97,13 +99,18 @@
                                                 </p></dd>
                                         </dl>
 
-                                        <hr>
-<!--                                        <p>Date created: <span id="datetime"> ${detail.createDate}</span></p>-->
+                                        <hr/>
+                                        <c:set var = "creDate" value = "${detail.createDate}" />
+                                        <div><p>Created Date: <fmt:formatDate type="time" value="${creDate}" pattern="dd/MM/yyyy"/></p></div>
+                                        <hr/>
+                                        <div><p>Instock: ${detail.quantity}</p></div>
+                                        <hr/>
                                         <div class="row">
                                             <div class="col-sm-5">
                                                 <input
                                                     type="number"
                                                     min="1"
+                                                    max="${detail.quantity}"
                                                     name="detailQuantity"
                                                     value="${not empty param.detailQuantity ? param.detailQuantity : "1"}"
                                                     maxlength="12"
@@ -112,9 +119,9 @@
                                                     />
                                             </div> <!-- col.// -->
                                         </div> <!-- row.// -->
-                                        <hr>
-                                        <a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
-                                        <a href="#" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Add to cart </a>
+                                        <hr/>
+                                        <a href="#" class="btn btn-lg btn-outline-primary text-uppercase"> Buy now </a>
+                                        <a href="cart?action=add to cart&pid=${detail.id}" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fa fa-cart-plus"></i> Add to cart </a>
                                     </article> <!-- card-body.// -->
                                 </aside> <!-- col.// -->
                             </div> <!-- row.// -->

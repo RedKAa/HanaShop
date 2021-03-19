@@ -70,10 +70,10 @@ public class SearchByNameControl extends HttpServlet {
             
             //Get list product - search by name
             ProductServiceImpl productService = new ProductServiceImpl();
-            List<Product> products = productService.seachByName(name, beginIndex, endIndex, isAdmin);
+            List<Product> products = productService.seachByName(name, beginIndex, endIndex, false);
 
             //Paging
-            int countResult = productService.countSearchByName(name, isAdmin);
+            int countResult = productService.countSearchByName(name, false);
             int endPage = countResult / pageSize;
             if (countResult % pageSize != 0) {
                 endPage++;

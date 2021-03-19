@@ -7,6 +7,7 @@ package hoangnt.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  *
@@ -14,23 +15,56 @@ import java.time.LocalDateTime;
  */
 public class Order implements Serializable{
     private String orderID;
-    private User user;
+    private String userID;
     private String payment;
     private boolean paymentSuccess;
     private String shippingAddress;
     private String phone;
-
+    private Date orderDate;
+    private float totalPrice;
+    
     public Order() {
     }
 
-    public Order(String orderID, User user, String payment, boolean paymentSuccess, String shippingAddress, String phone) {
+    public Order(String orderID, String userID, String payment, boolean paymentSuccess, String shippingAddress, String phone) {
         this.orderID = orderID;
-        this.user = user;
+        this.userID = userID;
         this.payment = payment;
         this.paymentSuccess = paymentSuccess;
         this.shippingAddress = shippingAddress;
         this.phone = phone;
     }
+
+    public Order(String orderID, String userID, String payment, boolean paymentSuccess, String shippingAddress, String phone, Date orderDate, float totalPrice) {
+        this.orderID = orderID;
+        this.userID = userID;
+        this.payment = payment;
+        this.paymentSuccess = paymentSuccess;
+        this.shippingAddress = shippingAddress;
+        this.phone = phone;
+        this.orderDate = orderDate;
+        this.totalPrice = totalPrice;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+    
+    
+
+ 
 
     public String getOrderID() {
         return orderID;
@@ -40,12 +74,12 @@ public class Order implements Serializable{
         this.orderID = orderID;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getPayment() {

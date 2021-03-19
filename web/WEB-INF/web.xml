@@ -60,6 +60,14 @@
         <servlet-name>SearchByNameAdminControl</servlet-name>
         <servlet-class>hoangnt.controller.admin.SearchByNameAdminControl</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CartControl</servlet-name>
+        <servlet-class>hoangnt.controller.CartControl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderControl</servlet-name>
+        <servlet-class>hoangnt.controller.OrderControl</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ServletDispatcher</servlet-name>
         <url-pattern>/ServletDispatcher</url-pattern>
@@ -119,6 +127,14 @@
     <servlet-mapping>
         <servlet-name>SearchByNameAdminControl</servlet-name>
         <url-pattern>/searchByNameAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartControl</servlet-name>
+        <url-pattern>/cart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderControl</servlet-name>
+        <url-pattern>/buy</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

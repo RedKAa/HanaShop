@@ -67,10 +67,10 @@ public class SearchByCategoryControl extends HttpServlet {
             }
             //Get list product - search by Category
             ProductServiceImpl productService = new ProductServiceImpl();
-            List<Product> products = productService.seachByCategory(cid, beginIndex, endIndex, isAdmin);
+            List<Product> products = productService.seachByCategory(cid, beginIndex, endIndex, false);
 
             //Paging
-            int countResult = productService.countSearchByCategory(cid, isAdmin);
+            int countResult = productService.countSearchByCategory(cid, false);
             int endPage = countResult / pageSize;
             if (countResult % pageSize != 0) {
                 endPage++;

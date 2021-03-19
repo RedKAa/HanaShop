@@ -57,41 +57,43 @@ public class SearchByNameAdminControl extends HttpServlet {
         endIndex = pageSize * pageIndex;
         //caculated
 
-        try {
-            
-            boolean isAdmin = false;
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                User user = (User) session.getAttribute("user");
-                if (user != null && user.checkAdmin()) {
-                    isAdmin = true;
-                }
-            }//checked
-            
-            //Get list product - search by name
-            ProductServiceImpl productService = new ProductServiceImpl();
-            List<Product> products = productService.seachByName(name, beginIndex, endIndex, isAdmin);
-
-            //Paging
-            int countResult = productService.countSearchByName(name, isAdmin);
-            int endPage = countResult / pageSize;
-            if (countResult % pageSize != 0) {
-                endPage++;
+        boolean isAdmin = false;
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null && user.checkAdmin()) {
+                isAdmin = true;
             }
-            //end of paging
-            //load bestSeller
-            Product top = productService.getBestSellerProduct();
-            request.setAttribute("top", top);
-            //end of load bestSeller
+        }//checked
+        if (isAdmin) {
+            try {
+                //Get list product - search by name
+                ProductServiceImpl productService = new ProductServiceImpl();
+                List<Product> products = productService.seachByName(name, beginIndex, endIndex, isAdmin);
 
-            request.setAttribute("pageIndex", pageIndex);
-            request.setAttribute("endPage", endPage);
-            request.setAttribute("Products", products);
-            request.setAttribute("action", "searchByNameAdmin");
-            request.setAttribute("txtSearch", name);
-        } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(URL);
-            rd.forward(request, response);
+                //Paging
+                int countResult = productService.countSearchByName(name, isAdmin);
+                int endPage = countResult / pageSize;
+                if (countResult % pageSize != 0) {
+                    endPage++;
+                }
+                //end of paging
+                //load bestSeller
+                Product top = productService.getBestSellerProduct();
+                request.setAttribute("top", top);
+                //end of load bestSeller
+
+                request.setAttribute("pageIndex", pageIndex);
+                request.setAttribute("endPage", endPage);
+                request.setAttribute("Products", products);
+                request.setAttribute("action", "searchByNameAdmin");
+                request.setAttribute("txtSearch", name);
+            } finally {
+                RequestDispatcher rd = request.getRequestDispatcher(URL);
+                rd.forward(request, response);
+            }
+        } else {
+            response.sendRedirect("view/Invalid.html");
         }
     }
 
